@@ -2,10 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
-/*getting API key
+/*getting API key and page key
 */
 require('dotenv').config();
 var auth=process.env.APIKEY;
+var pake_key=process.env.PAGEKEY;
+
 /* End getting key */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,7 +42,27 @@ app.post('/webhook', (req, res) => {
   }
 });
 
+const request = require('request');
+function sendMessage(event) {
+  let sender = event.sender.id;
+  let text = event.message.text;
 
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: {access_token: pake_key},
+    method: 'POST',
+    json: {
+      recipient: {id: sender},
+      message: {text: text}
+    }
+  }, function (error, response) {
+    if (error) {
+        console.log('Error sending message: ', error);
+    } else if (response.body.error) {
+        console.log('Error: ', response.body.error);
+    }
+  });
+}
 
 
 
