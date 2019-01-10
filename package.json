@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Armando024/chat_bot#readme",
   "dependencies": {
+    "apiai": "^4.0.3",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",

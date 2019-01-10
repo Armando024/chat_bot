@@ -6,9 +6,11 @@ const app = express();
 */
 require('dotenv').config();
 var auth=process.env.APIKEY;
-var pake_key=process.env.PAGEKEY;
-
+var page_key=process.env.PAGEKEY;
+var ai_key=process.env.AIKEY;
 /* End getting key */
+const ai = require('apiai')(ai_key);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -20,6 +22,8 @@ const server = app.listen(process.env.PORT || 5000, () => {
 
 /* For facebook Validation */
 app.get('/webhook', (req, res) => {
+  console.log(req);
+  console.log("asking for verification");
   if (req.query['hub.mode'] && req.query['hub.verify_token'] === String(auth) ) {
     res.status(200).send(req.query['hub.challenge']);
   } else {
@@ -27,8 +31,11 @@ app.get('/webhook', (req, res) => {
   }
 });
 
+//app.get('/web'
+
 /* Handling all messenges */
 app.post('/webhook', (req, res) => {
+  console.log('receving post request');
   console.log(req.body);
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
@@ -46,14 +53,16 @@ const request = require('request');
 function sendMessage(event) {
   let sender = event.sender.id;
   let text = event.message.text;
-
+  let apiai=ai.textRequest(text,{sessionId:'cool_cat'});
+  apiai.on('response',(response)=>{
+  let aiText=response.result.fulfillment.speech;
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token: pake_key},
+    qs: {access_token: page_key},
     method: 'POST',
     json: {
       recipient: {id: sender},
-      message: {text: text}
+      message: {text: aiText}
     }
   }, function (error, response) {
     if (error) {
@@ -62,6 +71,11 @@ function sendMessage(event) {
         console.log('Error: ', response.body.error);
     }
   });
+  });
+  
+  apiai.on('error',(error)=>{console.log(erro);});
+
+  apiai.end();
 }
 
 
