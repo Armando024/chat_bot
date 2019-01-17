@@ -8,6 +8,7 @@ require('dotenv').config();
 var auth=process.env.APIKEY;
 var page_key=process.env.PAGEKEY;
 var ai_key=process.env.AIKEY;
+var we_key=process.env.WEATHERKEY
 /* End getting key */
 const ai = require('apiai')(ai_key);
 
@@ -49,6 +50,10 @@ app.post('/webhook', (req, res) => {
   }
 });
 
+
+
+
+
 const request = require('request');
 function sendMessage(event) {
   let sender = event.sender.id;
@@ -77,6 +82,37 @@ function sendMessage(event) {
 
   apiai.end();
 }
+
+app.post('/webhook/ai', (req, res) => {
+    var action=String(req.body.queryResult.action);
+    console.log(action);
+    if (action === 'weather') {
+        let city = req.body.queryResult.parameters['geo-city'];
+        console.log(city);
+        let restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+we_key+'&q='+city+'&units=imperial';
+        console.log(restUrl);
+        request.get(restUrl, (err, response, body) => {
+        if (!err && response.statusCode == 200) {
+            let json = JSON.parse(body);
+            console.log(json);
+            let msg = json.weather[0].description + ' and the temperature is ' + json.main.temp + ' ℉';
+            console.log(msg);
+            return res.json({
+                fulfillmentText: msg,
+                source: 'weather'});
+         } else {
+           return res.status(400).json({
+            status: {
+            code: 400,
+            errorType: 'I failed to look up the city name.'}});
+         }})
+      } });
+
+
+
+
+
+
 
 
 
