@@ -1,16 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-
-/*getting API key and page key
+/*getting API keys and page key
 */
 require('dotenv').config();
 var auth=process.env.APIKEY;
 var page_key=process.env.PAGEKEY;
 var ai_key=process.env.AIKEY;
 var we_key=process.env.WEATHERKEY
+var langKey=process.env.LANGKEY;
 /* End getting key */
 const ai = require('apiai')(ai_key);
+var translate=require('yandex-translate')(langKey);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -83,13 +84,38 @@ function sendMessage(event) {
   apiai.end();
 }
 
+function Translate(txt){
+   //let restURL='https://translate.yandex.net/api/v1.5/tr.json/getLangs?key='+langKey+'&text=Hello%20World&lang=en-es' 
+    translate.translate('Hello World',{to:'es'},function(err,res){ 
+        console.log(res.text);
+    });
+
+}
+
+
 app.post('/webhook/ai', (req, res) => {
-    var action=String(req.body.queryResult.action);
-    console.log(action);
+    var action=String(req.body.queryResult.action); 
+    console.log(req.body);
     if (action === 'weather') {
         let city = req.body.queryResult.parameters['geo-city'];
+        let zipcode=req.body.queryResult.parameters['zip-code'];
+        let lang=req.body.queryResult.parameters['language'];
+        Translate('hi');
+        /* Control flow*/
+        let restUrl;
+        if(zipcode!=''){
+        restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+we_key+'&zip='+zipcode+',us'+'&units=imperial';
+        }else{
+        restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+we_key+'&q='+city+'&units=imperial';
+        }
+        
+        if(lang!=''){
+        restUrl=restUrl+'&lang=es'//+lang;
+        }
+
         console.log(city);
-        let restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+we_key+'&q='+city+'&units=imperial';
+        console.log(zipcode);
+        console.log(lang);
         console.log(restUrl);
         request.get(restUrl, (err, response, body) => {
         if (!err && response.statusCode == 200) {
