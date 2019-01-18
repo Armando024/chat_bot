@@ -22,8 +22,15 @@
 
  Open Weather Map
     -Used as a restful API to get current weather depending in city or zipcode
+    
  Yandex
     -Used as a restful API to send text and receive the translated text. 
+    
  Facebook Messanger
     -Used as a User Interface between the user and the bot
+## How to execute?
+Currently is in the process of getting deploy by Facebook. 
+However if interested you can view the facebook documents in the link below.
+
+https://developers.facebook.com/docs
 
