@@ -1,7 +1,7 @@
 # Chat Bot that can tell you the weather in different laguages. 
 
 ### You can enter any USA city or zipcode
-  Examples:
+    Examples:
     Weather in NYC?
     Weather in New York City?
     Forecast in SF?
@@ -14,7 +14,7 @@
     Weather in SF? Spanish
 
 ## Example gif
-<img src="https://github.com/Armando024/chat_bot/blob/master/media/chatBot.gif" width="338" height="600" />
+<img src="https://github.com/Armando024/chat_bot/blob/master/media/chatBot.gif" width="475" height="600" />
 
 ## API's used
  Dialogflow
