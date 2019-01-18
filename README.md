@@ -49,7 +49,7 @@
  Yandex
     -Used as a restful API to send text and receive the translated text. 
     
- Facebook Messanger
+ Facebook Messenger
     -Used as a User Interface between the user and the bot
 ## How to execute?
 Currently is in the process of getting deploy by Facebook. 
