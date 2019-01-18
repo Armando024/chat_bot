@@ -14,7 +14,7 @@
     Weather in SF? Spanish
 
 ## Example gif
-<img src="https://github.com/Armando024/chat_bot/blob/master/chat_bot.gif" width="338" height="600" />
+<img src="https://github.com/Armando024/chat_bot/blob/master/media/chatBot.gif" width="338" height="600" />
 
 ## API's used
  Dialogflow
