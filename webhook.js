@@ -11,7 +11,9 @@ var we_key=process.env.WEATHERKEY
 var langKey=process.env.LANGKEY;
 /* End getting key */
 const ai = require('apiai')(ai_key);
+/* Setting up language to language code*/
 var translate=require('yandex-translate')(langKey);
+var mp=new Map([['Chinese','zh'],['Engish','en'],['French','fr'],['German','de'],['Italian','it'],['Japanese','ja'],['Korean','ko'],['Spanish','es'],['Swedish','sv'],['Thai','th'],['Turkish','tr'],['Ukranian','uk'],['Polish','pl'],['Russian','ru'],['Hindi','hi'],['Indonesian','id'],['Danish','da'],['Dutch','nl'],['Norwegian','no']]);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -84,14 +86,17 @@ function sendMessage(event) {
   apiai.end();
 }
 
-function Translate(txt){
-   //let restURL='https://translate.yandex.net/api/v1.5/tr.json/getLangs?key='+langKey+'&text=Hello%20World&lang=en-es' 
-    translate.translate('Hello World',{to:'es'},function(err,res){ 
+function Translate(callback,txt){
+    translate.translate(txt,{to:'es'},function(err,res){ 
         console.log(res.text);
+        callback(res.txt);
     });
 
 }
 
+function logTxt(txt){
+    return txt;
+}
 
 app.post('/webhook/ai', (req, res) => {
     var action=String(req.body.queryResult.action); 
@@ -100,41 +105,73 @@ app.post('/webhook/ai', (req, res) => {
         let city = req.body.queryResult.parameters['geo-city'];
         let zipcode=req.body.queryResult.parameters['zip-code'];
         let lang=req.body.queryResult.parameters['language'];
-        Translate('hi');
-        /* Control flow*/
+        /*ZipCode is more accurate than a city therefore if both are given i search in zipcode */
         let restUrl;
         if(zipcode!=''){
         restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+we_key+'&zip='+zipcode+',us'+'&units=imperial';
         }else{
         restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+we_key+'&q='+city+'&units=imperial';
         }
-        
-        if(lang!=''){
-        restUrl=restUrl+'&lang=es'//+lang;
-        }
 
-        console.log(city);
-        console.log(zipcode);
-        console.log(lang);
-        console.log(restUrl);
         request.get(restUrl, (err, response, body) => {
         if (!err && response.statusCode == 200) {
             let json = JSON.parse(body);
-            console.log(json);
             let msg = json.weather[0].description + ' and the temperature is ' + json.main.temp + ' ℉';
-            console.log(msg);
-            return res.json({
-                fulfillmentText: msg,
-                source: 'weather'});
-         } else {
+            //console.log(mp.get(lang));
+            if(lang!=''){
+                let langCode=mp.get(lang);
+                if(langCode===undefined){
+                    msg+=' Sorry we could not translate.Please try again';
+                    return res.json({
+                        fulfillmentText:msg
+                        ,source:'weather'
+                    });
+                }
+                translate.translate(msg,{to:langCode},function(err,results){
+                    return res.json({
+                        fulfillmentText:results.text
+                        ,source:'weather'});
+                });
+            
+            }else {
+                return res.json({
+                    fulfillmentText: msg,
+                    source: 'weather'});}
+        
+        } else {
            return res.status(400).json({
             status: {
             code: 400,
             errorType: 'I failed to look up the city name.'}});
-         }})
+         }
+        })
       } });
 
 
+/*Chinese zh
+ *English
+ *French
+ *German
+ *Italian 
+ *Japanese
+ *Korean
+ *Portuguese
+ *Spanish
+ *Swedish
+  Thai
+  Turkish
+  Ukranian
+  Polish
+  Russian
+  Hindi
+  Indonesian
+  Danish
+  Dutch
+  Norwegian
+
+
+
+ */
 
 
 
