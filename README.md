@@ -12,6 +12,29 @@
     Examples:
     Weather in NYC translated to German?
     Weather in SF? Spanish
+    
+    Supported Languages:
+    *Chinese zh
+    *English
+    *French
+    *German
+    *Italian 
+    *Japanese
+    *Korean
+    *Portuguese
+    *Spanish
+    *Swedish
+    *Thai
+    *Turkish
+    *Ukranian
+    *Polish
+    *Russian
+    *Hindi
+    *Indonesian
+    *Danish
+    *Dutch
+    *Norwegian
+
 
 ## Example gif
 <img src="https://github.com/Armando024/chat_bot/blob/master/media/chatBot.gif" width="475" height="600" />
