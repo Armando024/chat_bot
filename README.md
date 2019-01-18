@@ -14,7 +14,16 @@
     Weather in SF? Spanish
 
 ## Example gif
-<img src="https://github.com/Armando024/old_aaguirre/blob/master/static/snake.gif" width="341.23" height="481.7" />
+<img src="https://github.com/Armando024/chat_bot/blob/master/chat_bot.gif" width="341.23" height="481.7" />
 
+## API's used
+ Dialogflow
+    -Used to train and create instant responses
 
+ Open Weather Map
+    -Used as a restful API to get current weather depending in city or zipcode
+ Yandex
+    -Used as a restful API to send text and receive the translated text. 
+ Facebook Messanger
+    -Used as a User Interface between the user and the bot
 
